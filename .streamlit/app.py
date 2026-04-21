@@ -27,7 +27,7 @@ threshold_decimal = user_threshold / 100
 # 4. Data Engine
 if ticker:
     with st.spinner(f'Fetching {ticker} data...'):
-        df = yf.download(ticker, period="1y")
+       df = yf.download(ticker, period="1y", auto_adjust=True, multi_level_download=False)
         
     if not df.empty:
         # Calculate 50-day Moving Average
