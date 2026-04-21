@@ -33,8 +33,8 @@ if ticker:
         df['MA50'] = df['Close'].rolling(window=50).mean()
         
         # Core Math Logic - Fixed for YFinance Series
-        curr_price = float(df['Close'].iloc[-1])
-        ma50_val = float(df['MA50'].iloc[-1])
+        curr_price = float(df['Close'].values[-1])
+        ma50_val = float(df['MA50'].values[-1])
         
         if pd.isna(ma50_val):
             st.warning("Calculating initial MA50... please wait or try another ticker.")
