@@ -1,12 +1,13 @@
 import streamlit as st
 import yfinance as yf
 import pandas as pd
+import numpy as np
 import plotly.graph_objects as go
 
 # 1. Page Configuration
 st.set_page_config(page_title="Nomos Terminal", layout="wide")
 
-# 2. Styling (Professional Terminal Aesthetic)
+# 2. Styling
 st.markdown("""
     <style>
     .main { background-color: #0E1117; }
@@ -15,7 +16,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("🏛️ NOMOS TERMINAL")
-st.caption("Deterministic Market Sentiment Engine | v1.0")
+st.caption("Deterministic Market Sentiment Engine | v1.1")
 
 # 3. Sidebar Controls
 st.sidebar.header("Terminal Controls")
@@ -26,20 +27,21 @@ threshold_decimal = user_threshold / 100
 # 4. Data Engine
 if ticker:
     with st.spinner(f'Fetching {ticker} data...'):
-        # Removed invalid parameter multi_level_download
-        df = yf.download(ticker, period="1y", auto_adjust=True)
+        # Using multi_level_download=False to keep the table simple
+        df = yf.download(ticker, period="1y", interval="1d", auto_adjust=True, multi_level_download=False)
         
     if not df.empty and len(df) >= 50:
         # Calculate 50-day Moving Average
         df['MA50'] = df['Close'].rolling(window=50).mean()
         
-        # Core Math Logic - Fixed for YFinance Series
-        curr_price = float(df['Close'].values[-1])
-        ma50_val = float(df['MA50'].values[-1])
+        # FIX: Flattening the arrays to prevent "0-dimensional array" errors
+        curr_price = float(np.array(df['Close'].iloc[-1]).flatten()[0])
+        ma50_val = float(np.array(df['MA50'].iloc[-1]).flatten()[0])
         
         if pd.isna(ma50_val):
-            st.warning("Calculating initial MA50... please wait or try another ticker.")
+            st.warning("Still calculating MA50... please wait.")
         else:
+            # The Core Math
             diff = (curr_price - ma50_val) / ma50_val
             
             if abs(diff) < threshold_decimal:
@@ -57,14 +59,14 @@ if ticker:
 
             st.markdown(f"### Sentiment: <span style='color:{color}'>{label}</span>", unsafe_allow_html=True)
             
-            # 6. Interactive Plotly Chart
+            # 6. Charting
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=df.index, y=df['Close'], name='Price', line=dict(color='#FAFAFA')))
-            fig.add_trace(go.Scatter(x=df.index, y=df['MA50'], name='50-Day MA', line=dict(color='#FFD700', dash='dot')))
+            fig.add_trace(go.Scatter(x=df.index, y=df['Close'].values.flatten(), name='Price', line=dict(color='#FAFAFA')))
+            fig.add_trace(go.Scatter(x=df.index, y=df['MA50'].values.flatten(), name='50-Day MA', line=dict(color='#FFD700', dash='dot')))
             fig.update_layout(template="plotly_dark", hovermode="x unified", margin=dict(l=0, r=0, t=0, b=0))
             st.plotly_chart(fig, use_container_width=True)
     else:
-        st.error("Data error. Check ticker or internet connection.")
+        st.error("No data found. If this is a crypto or Indian stock, ensure the ticker is correct (e.g., BTC-USD or RELIANCE.NS).")
 
 st.sidebar.write("---")
-st.sidebar.caption("Institutional-grade synthesis. No noise.")
+st.sidebar.caption("Institutional-grade synthesis.")
