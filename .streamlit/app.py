@@ -16,32 +16,28 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("🏛️ NOMOS TERMINAL")
-st.caption("Deterministic Market Sentiment Engine | v1.1")
+st.caption("Deterministic Market Sentiment Engine | v1.2")
 
-# 3. Sidebar Controls
+# 3. Sidebar Controls - Ticker is defined here FIRST
 st.sidebar.header("Terminal Controls")
 ticker = st.sidebar.text_input("Asset Ticker", value="TSLA").upper()
 user_threshold = st.sidebar.slider("Neutral Zone (%)", 0.05, 0.50, 0.10, step=0.01)
 threshold_decimal = user_threshold / 100
 
-# 4. Data Engine
+# 4. Data Engine - Only runs if ticker exists
 if ticker:
     with st.spinner(f'Fetching {ticker} data...'):
-        # Using multi_level_download=False to keep the table simple
-        df = yf.download(ticker, period="1y", interval="1d", auto_adjust=True, multi_level_download=False)
+        # Removed multi_level_download to ensure compatibility with version 1.3.0
+        df = yf.download(ticker, period="1y", interval="1d", auto_adjust=True)
         
     if not df.empty and len(df) >= 50:
-        # Calculate 50-day Moving Average
         df['MA50'] = df['Close'].rolling(window=50).mean()
         
-        # FIX: Flattening the arrays to prevent "0-dimensional array" errors
+        # Flattening to prevent 0-dimensional array errors
         curr_price = float(np.array(df['Close'].iloc[-1]).flatten()[0])
         ma50_val = float(np.array(df['MA50'].iloc[-1]).flatten()[0])
         
-        if pd.isna(ma50_val):
-            st.warning("Still calculating MA50... please wait.")
-        else:
-            # The Core Math
+        if not pd.isna(ma50_val):
             diff = (curr_price - ma50_val) / ma50_val
             
             if abs(diff) < threshold_decimal:
@@ -51,7 +47,6 @@ if ticker:
             else:
                 score, label, color = 1, "BEARISH", "#ff0000"
                 
-            # 5. Display Metrics
             col1, col2, col3 = st.columns(3)
             col1.metric("Current Price", f"${curr_price:.2f}")
             col2.metric("50-Day MA", f"${ma50_val:.2f}")
@@ -59,14 +54,10 @@ if ticker:
 
             st.markdown(f"### Sentiment: <span style='color:{color}'>{label}</span>", unsafe_allow_html=True)
             
-            # 6. Charting
             fig = go.Figure()
             fig.add_trace(go.Scatter(x=df.index, y=df['Close'].values.flatten(), name='Price', line=dict(color='#FAFAFA')))
             fig.add_trace(go.Scatter(x=df.index, y=df['MA50'].values.flatten(), name='50-Day MA', line=dict(color='#FFD700', dash='dot')))
-            fig.update_layout(template="plotly_dark", hovermode="x unified", margin=dict(l=0, r=0, t=0, b=0))
+            fig.update_layout(template="plotly_dark", margin=dict(l=0, r=0, t=0, b=0))
             st.plotly_chart(fig, use_container_width=True)
     else:
-        st.error("No data found. If this is a crypto or Indian stock, ensure the ticker is correct (e.g., BTC-USD or RELIANCE.NS).")
-
-st.sidebar.write("---")
-st.sidebar.caption("Institutional-grade synthesis.")
+        st.error("Check your ticker symbol and try again.")
