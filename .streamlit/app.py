@@ -378,6 +378,14 @@ h1, h2, h3, h4 {
     font-weight: 600;
 }
 
+/* Ensure inputs are always interactive */
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 999 !important;
+}
+
 /* Hide default streamlit branding */
 #MainMenu, footer, header { visibility: hidden; }
 </style>
