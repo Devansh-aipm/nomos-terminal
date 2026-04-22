@@ -603,14 +603,19 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("**Asset Search**")
+    if "ticker" not in st.session_state:
+        st.session_state["ticker"] = "NVDA"
     user_input = st.text_input(
         "Asset Search",
-        value="NVDA",
+        value=st.session_state["ticker"],
         placeholder="e.g. NVDA, RELIANCE.NS, HSBA.L",
         help="Enter any global ticker. Add .NS for NSE, .L for London, .DE for Frankfurt, etc.",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="ticker_input"
     )
     user_input = (user_input or "").strip().upper()
+    if user_input:
+        st.session_state["ticker"] = user_input
 
     sensitivity = st.slider(
         "Signal Sensitivity",
