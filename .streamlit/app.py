@@ -909,15 +909,15 @@ if user_input:
 
                 # Summary table
                 scan_df = pd.DataFrame([{
-                    'Ticker':      r['ticker'],
-                    'Score':       r['score'],
-                    'Signal':      r['signal'],
-                    'Price':       f"${r['price']}",
-                    'RSI':         r['rsi'],
-                    'Vol Ratio':   r['vol_ratio'],
-                    'Confluence':  f"{r['confluence_count']}/4",
-                    'Dist Support':r['dist_sup'],
-                    'Dist Resist': r['dist_res'],
+                    'Ticker':       r['ticker'],
+                    'Score':        float(r['score']),   # explicit float — prevents blank cell
+                    'Signal':       r['signal'],
+                    'Price':        f"${r['price']}",
+                    'RSI':          float(r['rsi']),
+                    'Vol Ratio':    float(r['vol_ratio']),
+                    'Confluence':   f"{r['confluence_count']}/4",
+                    'Dist Support': r['dist_sup'],
+                    'Dist Resist':  r['dist_res'],
                 } for r in results])
                 st.dataframe(scan_df, use_container_width=True, hide_index=True)
 
