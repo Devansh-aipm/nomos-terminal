@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 from scipy.stats import t as t_dist
 
 # ============================================================
-# NOMOS TERMINAL v12.0
+# NOMOS TERMINAL v11.0
 # Global multi-factor decision architecture
 # ============================================================
 
@@ -14,17 +14,17 @@ st.set_page_config(
     page_title="Nomos Terminal",
     layout="wide",
     initial_sidebar_state="expanded",
-    menu_items={"About": "Nomos Terminal v12.0 — Institutional Decision Architecture"}
+    menu_items={"About": "Nomos Terminal v11.0 — Institutional Decision Architecture"}
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body, [class*="css"] {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     background-color: #05070A;
     color: #D4D8E1;
 }
@@ -36,7 +36,7 @@ html, body, [class*="css"] {
 }
 
 h1, h2, h3, h4 {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Syne', sans-serif !important;
     font-weight: 700 !important;
     letter-spacing: -0.03em !important;
 }
@@ -46,7 +46,7 @@ h1, h2, h3, h4 {
     background: #080B0F !important;
     border-right: 1px solid #141820 !important;
 }
-[data-testid="stSidebar"] * { font-family: 'Inter', sans-serif !important; }
+[data-testid="stSidebar"] * { font-family: 'Syne', sans-serif !important; }
 
 /* ── METRICS ── */
 [data-testid="stMetric"] {
@@ -59,13 +59,13 @@ h1, h2, h3, h4 {
 }
 [data-testid="stMetric"]:hover { border-color: #C8A84B !important; }
 [data-testid="stMetricValue"] {
-    font-family: 'IBM Plex Mono', monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 1.35rem !important;
     font-weight: 500 !important;
     color: #E8EAF0 !important;
 }
 [data-testid="stMetricLabel"] {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Syne', sans-serif !important;
     font-size: 0.65rem !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
@@ -73,7 +73,7 @@ h1, h2, h3, h4 {
     font-weight: 600 !important;
 }
 [data-testid="stMetricDelta"] {
-    font-family: 'IBM Plex Mono', monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.72rem !important;
 }
 
@@ -84,7 +84,7 @@ h1, h2, h3, h4 {
     background: transparent !important;
 }
 [data-testid="stTabs"] button[role="tab"] {
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Syne', sans-serif !important;
     font-size: 0.78rem !important;
     font-weight: 600 !important;
     letter-spacing: 0.08em !important;
@@ -109,7 +109,7 @@ h1, h2, h3, h4 {
     border: 1px solid #1E2430 !important;
     border-radius: 6px !important;
     color: #E8EAF0 !important;
-    font-family: 'IBM Plex Mono', monospace !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 0.9rem !important;
 }
 [data-testid="stTextInput"] input:focus,
@@ -139,7 +139,7 @@ h1, h2, h3, h4 {
     margin-bottom: 4px;
 }
 .nomos-wordmark {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 2.4rem;
     font-weight: 800;
     letter-spacing: -0.04em;
@@ -147,7 +147,7 @@ h1, h2, h3, h4 {
     line-height: 1;
 }
 .nomos-version {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     color: #C8A84B;
     letter-spacing: 0.12em;
@@ -157,7 +157,7 @@ h1, h2, h3, h4 {
     border-radius: 3px;
 }
 .nomos-sub {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.8rem;
     color: #5A6070;
     letter-spacing: 0.06em;
@@ -167,7 +167,7 @@ h1, h2, h3, h4 {
 
 .signal-pill {
     display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.1em;
@@ -188,7 +188,7 @@ h1, h2, h3, h4 {
 }
 .stat-card:hover { border-color: #1E2430; }
 .stat-label {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.62rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -197,7 +197,7 @@ h1, h2, h3, h4 {
     margin: 0 0 6px 0;
 }
 .stat-value {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 1.4rem;
     font-weight: 500;
     color: #E8EAF0;
@@ -205,7 +205,7 @@ h1, h2, h3, h4 {
     line-height: 1;
 }
 .stat-sub {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.72rem;
     color: #5A6070;
     margin: 4px 0 0 0;
@@ -218,7 +218,7 @@ h1, h2, h3, h4 {
     padding: 20px;
 }
 .gauge-label {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.62rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -239,7 +239,7 @@ h1, h2, h3, h4 {
     background: linear-gradient(90deg, #C0392B 0%, #E67E22 35%, #C8A84B 60%, #27AE60 100%);
 }
 .gauge-score {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 2.8rem;
     font-weight: 600;
     text-align: center;
@@ -247,7 +247,7 @@ h1, h2, h3, h4 {
     margin: 4px 0;
 }
 .gauge-verdict {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.72rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -258,7 +258,7 @@ h1, h2, h3, h4 {
 .gauge-legend {
     display: flex;
     justify-content: space-between;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.62rem;
     color: #3A4050;
     margin-top: 6px;
@@ -272,8 +272,8 @@ h1, h2, h3, h4 {
     padding: 14px 16px;
     margin-bottom: 16px;
 }
-.score-guide p { margin: 3px 0; font-size: 0.78rem; color: #8A9099; font-family: 'Inter', sans-serif; }
-.score-guide span { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+.score-guide p { margin: 3px 0; font-size: 0.78rem; color: #8A9099; font-family: 'Syne', sans-serif; }
+.score-guide span { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
 
 .landing-card {
     background: #080B0F;
@@ -285,7 +285,7 @@ h1, h2, h3, h4 {
     max-width: 600px;
 }
 .landing-title {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: #E8EAF0;
@@ -293,7 +293,7 @@ h1, h2, h3, h4 {
     margin-bottom: 12px;
 }
 .landing-desc {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.85rem;
     color: #5A6070;
     line-height: 1.7;
@@ -311,7 +311,7 @@ h1, h2, h3, h4 {
     border: 1px solid #1E2430;
     border-radius: 6px;
     padding: 12px 16px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.75rem;
     color: #8A9099;
     text-align: center;
@@ -320,7 +320,7 @@ h1, h2, h3, h4 {
 .landing-step strong {
     display: block;
     color: #C8A84B;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -334,13 +334,13 @@ h1, h2, h3, h4 {
     margin-bottom: 2px;
 }
 .tooltip-term {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'JetBrains Mono', monospace;
     font-size: 0.75rem;
     color: #C8A84B;
     min-width: 80px;
 }
 .tooltip-def {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.75rem;
     color: #5A6070;
 }
@@ -351,7 +351,7 @@ h1, h2, h3, h4 {
     border-left: 2px solid #C8A84B;
     border-radius: 0 4px 4px 0;
     padding: 10px 16px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.72rem;
     color: #3A4050;
     line-height: 1.6;
@@ -359,7 +359,7 @@ h1, h2, h3, h4 {
 }
 
 .section-header {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.68rem;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -373,7 +373,7 @@ h1, h2, h3, h4 {
 .consistency-block {
     border-radius: 6px;
     padding: 14px 18px;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Syne', sans-serif;
     font-size: 0.82rem;
     font-weight: 600;
 }
@@ -409,16 +409,15 @@ def get_currency(ticker):
     return "$", "USD"
 
 def fmt_price(val, sym):
-    # JPY and KRW are whole-number currencies — no decimal places
-    if sym in ("¥", "₩"):
-        return f"{sym}{val:,.0f}"
+    if sym in ("₹", "¥", "₩"):
+        return f"{sym}{val:,.2f}"
     return f"{sym}{val:,.2f}"
 
 # ─── DATA LAYER ───────────────────────────────────────────────────────────────
 
 @st.cache_data(ttl=1800)
 def fetch_data(ticker):
-    """Try exact ticker first, then regional suffixes. Returns (df, resolved_ticker, info_dict)."""
+    """Try exact ticker first, then regional suffixes. Returns (df, resolved_ticker)."""
     candidates = [ticker]
     # Only add Indian suffixes if user didn't specify a suffix
     if "." not in ticker:
@@ -427,15 +426,7 @@ def fetch_data(ticker):
         try:
             data = yf.Ticker(tk).history(period="3y")
             if not data.empty and len(data) >= 150:
-                # Convert fast_info to a plain dict so Streamlit cache can serialize it
-                try:
-                    raw_info = yf.Ticker(tk).fast_info
-                    info = {k: getattr(raw_info, k, None) for k in [
-                        "last_price", "market_cap", "fifty_two_week_high",
-                        "fifty_two_week_low", "currency", "exchange"
-                    ]}
-                except Exception:
-                    info = {}
+                info = yf.Ticker(tk).fast_info
                 return data, tk, info
         except Exception:
             continue
@@ -484,9 +475,7 @@ def compute_indicators(df, sensitivity):
 
 # ─── MONTE CARLO ──────────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=1800)
-def run_monte_carlo(current_price, returns_tuple, days=21, sims=500):
-    returns_series = pd.Series(returns_tuple)
+def run_monte_carlo(current_price, returns_series, days=21, sims=500):
     params = t_dist.fit(returns_series.dropna())
     df_t, loc_t, scale_t = params
     shocks = t_dist.rvs(df_t, loc=loc_t, scale=scale_t, size=(days, sims))
@@ -561,20 +550,20 @@ def base_layout(height=380, xtitle=None, ytitle=None):
         plot_bgcolor=PLOT_BG,
         height=height,
         margin=dict(l=0, r=0, t=8, b=0),
-        font=dict(family="Inter, sans-serif", color="#8A9099", size=11),
+        font=dict(family="Syne, sans-serif", color="#8A9099", size=11),
         xaxis=dict(
             gridcolor=GRID_COL, gridwidth=1, zeroline=False,
             title=xtitle, title_font=dict(size=10, color=MUTED),
-            tickfont=dict(family="IBM Plex Mono", size=10)
+            tickfont=dict(family="JetBrains Mono", size=10)
         ),
         yaxis=dict(
             gridcolor=GRID_COL, gridwidth=1, zeroline=False,
             title=ytitle, title_font=dict(size=10, color=MUTED),
-            tickfont=dict(family="IBM Plex Mono", size=10)
+            tickfont=dict(family="JetBrains Mono", size=10)
         ),
         legend=dict(
             orientation='h', y=1.08, x=0,
-            font=dict(family="Inter", size=10),
+            font=dict(family="Syne", size=10),
             bgcolor='rgba(0,0,0,0)'
         )
     )
@@ -584,8 +573,8 @@ def base_layout(height=380, xtitle=None, ytitle=None):
 with st.sidebar:
     st.markdown("""
     <div style="margin-bottom:24px;">
-        <div style="font-family:'Inter', sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-0.03em;color:#E8EAF0;">NOMOS</div>
-        <div style="font-family:'IBM Plex Mono', monospace;font-size:0.62rem;color:#C8A84B;letter-spacing:0.12em;margin-top:2px;">TERMINAL v12.0</div>
+        <div style="font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-0.03em;color:#E8EAF0;">NOMOS</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:#C8A84B;letter-spacing:0.12em;margin-top:2px;">TERMINAL v11.0</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -606,8 +595,7 @@ with st.sidebar:
     )
 
     rf_label = "Risk-Free Rate (% p.a.)"
-    # Default to USD rate; will show a banner to update if currency differs
-    rf_default = float(st.session_state.get("rf_default", 5.25))
+    rf_default = 5.25
     risk_free_rate = st.number_input(
         rf_label,
         value=rf_default,
@@ -627,7 +615,7 @@ with st.sidebar:
 
     st.divider()
     st.markdown("""
-    <div style="font-family:'Inter', sans-serif;font-size:0.7rem;color:#3A4050;line-height:1.7;">
+    <div style="font-family:'Syne',sans-serif;font-size:0.7rem;color:#3A4050;line-height:1.7;">
         Nomos Score above 7.5 signals a buy condition.<br>
         Below 4.0 signals an exit condition.<br>
         Between 4.0 and 7.5 is a hold zone.
@@ -650,7 +638,7 @@ st.markdown("""
 st.markdown("""
 <div class="nomos-header">
     <span class="nomos-wordmark">NOMOS TERMINAL</span>
-    <span class="nomos-version">v12.0</span>
+    <span class="nomos-version">v11.0</span>
 </div>
 <div class="nomos-sub">Multi-Factor Decision Architecture &nbsp;·&nbsp; Fat-Tail Risk Engine &nbsp;·&nbsp; Walk-Forward Validation</div>
 """, unsafe_allow_html=True)
@@ -674,7 +662,7 @@ if not user_input:
             <div class="landing-step"><strong>Step 3</strong>Explore risk simulations</div>
             <div class="landing-step"><strong>Step 4</strong>Review backtest results</div>
         </div>
-        <div style="font-family:'Inter', sans-serif;font-size:0.72rem;color:#3A4050;">
+        <div style="font-family:'Syne',sans-serif;font-size:0.72rem;color:#3A4050;">
             Supports global equities: NYSE, NASDAQ, NSE, BSE, LSE, Euronext, TSE and more.
         </div>
     </div>
@@ -767,11 +755,11 @@ st.markdown(f'<div style="margin:14px 0 20px 0;line-height:2.4;">{pill_html}</di
 if abs(suggested_rf - risk_free_rate * 100) > 1.5:
     st.markdown(
         f'<div style="background:#0D1018;border:1px solid #1E2430;border-left:2px solid {GOLD};'
-        f'border-radius:0 4px 4px 0;padding:9px 16px;font-family:\'Inter\',sans-serif;font-size:0.75rem;'
+        f'border-radius:0 4px 4px 0;padding:9px 16px;font-family:\'Syne\',sans-serif;font-size:0.75rem;'
         f'color:#8A9099;margin-bottom:16px;">'
-        f'Detected currency: <span style="color:{GOLD};font-family:\'IBM Plex Mono\',monospace;">{currency_code}</span> — '
+        f'Detected currency: <span style="color:{GOLD};font-family:\'JetBrains Mono\',monospace;">{currency_code}</span> — '
         f'suggested risk-free rate for this market is '
-        f'<span style="color:{GOLD};font-family:\'IBM Plex Mono\',monospace;">{suggested_rf:.2f}%</span>. '
+        f'<span style="color:{GOLD};font-family:\'JetBrains Mono\',monospace;">{suggested_rf:.2f}%</span>. '
         f'Update in the sidebar if needed.</div>',
         unsafe_allow_html=True
     )
@@ -908,7 +896,7 @@ with tab2:
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
 
     with st.spinner(f"Running {mc_sims:,} Monte Carlo paths..."):
-        mc = run_monte_carlo(curr['Close'], tuple(returns.values), sims=mc_sims)
+        mc = run_monte_carlo(curr['Close'], returns, sims=mc_sims)
 
     p5, p25, p75, p95 = [np.percentile(mc, p, axis=1) for p in [5, 25, 75, 95]]
     prob_up = (mc[-1] > curr['Close']).mean()
@@ -955,7 +943,7 @@ with tab2:
     with st.expander("Methodology — Fat-Tail Simulation"):
         df_t_param = t_dist.fit(returns)[0]
         st.markdown(f"""
-        <div style="font-family:'Inter', sans-serif;font-size:0.8rem;color:#8A9099;line-height:1.8;">
+        <div style="font-family:'Syne',sans-serif;font-size:0.8rem;color:#8A9099;line-height:1.8;">
             <div class="tooltip-row"><span class="tooltip-term">Model</span>
                 <span class="tooltip-def">Student's t-distribution — captures fat tails that Gaussian models miss</span></div>
             <div class="tooltip-row"><span class="tooltip-term">Degrees</span>
@@ -1052,7 +1040,7 @@ with tab3:
 with tab4:
     st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
     st.markdown("""
-    <div style="font-family:'Inter', sans-serif;font-size:0.82rem;color:#8A9099;margin-bottom:16px;line-height:1.7;">
+    <div style="font-family:'Syne',sans-serif;font-size:0.82rem;color:#8A9099;margin-bottom:16px;line-height:1.7;">
         The 3-year history is split into 5 independent folds. Each fold trains on its first half and is tested on the second.
         This prevents the strategy from simply memorising past data — if it performs across all folds, the signal is likely real.
     </div>
@@ -1063,7 +1051,7 @@ with tab4:
 
     if wf_results:
         sharpes  = [r['sharpe']     for r in wf_results]
-        calmars  = [r['calmar']     for r in wf_results]
+        caldmars = [r['calmar']     for r in wf_results]
         mdds     = [r['mdd']        for r in wf_results]
         win_rs   = [r['win_rate']   for r in wf_results]
         ann_rs   = [r['ann_return'] for r in wf_results]
@@ -1071,8 +1059,8 @@ with tab4:
         w1, w2, w3, w4, w5 = st.columns(5)
         w1.metric("Avg Sharpe (OOS)",    f"{np.mean(sharpes):.2f}",
                   delta=f"SD ±{np.std(sharpes):.2f}")
-        w2.metric("Avg Calmar (OOS)",    f"{np.mean(calmars):.2f}",
-                  delta=f"SD ±{np.std(calmars):.2f}")
+        w2.metric("Avg Calmar (OOS)",    f"{np.mean(caldmars):.2f}",
+                  delta=f"SD ±{np.std(caldmars):.2f}")
         w3.metric("Avg Max Drawdown",    f"{np.mean(mdds)*100:.1f}%")
         w4.metric("Avg Win Rate (OOS)",  f"{np.mean(win_rs)*100:.1f}%")
         w5.metric("Avg Ann. Return",     f"{np.mean(ann_rs)*100:.1f}%")
@@ -1083,7 +1071,7 @@ with tab4:
         fold_labels = [f"Fold {r['fold']}" for r in wf_results]
         fig_wf = go.Figure()
         fig_wf.add_trace(go.Bar(name='Sharpe',   x=fold_labels, y=sharpes,   marker_color=GOLD,  opacity=0.85))
-        fig_wf.add_trace(go.Bar(name='Calmar',   x=fold_labels, y=calmars,   marker_color=BLUE,  opacity=0.85))
+        fig_wf.add_trace(go.Bar(name='Calmar',   x=fold_labels, y=caldmars,  marker_color=BLUE,  opacity=0.85))
         fig_wf.add_trace(go.Bar(name='Win Rate', x=fold_labels, y=win_rs,    marker_color=GREEN, opacity=0.85))
         fig_wf.update_layout(**base_layout(height=300), barmode='group')
         st.plotly_chart(fig_wf, use_container_width=True)
@@ -1136,7 +1124,7 @@ st.markdown(f"""
     survivorship bias and model risk. Capital markets involve substantial risk of loss.
     Currency displayed: {currency_code} ({currency_sym}). Risk-free rate applied: {risk_free_rate*100:.2f}% p.a.
 </div>
-<div style="font-family:'IBM Plex Mono', monospace;font-size:0.6rem;color:#1E2430;text-align:right;margin-top:8px;">
-    NOMOS TERMINAL v12.0 — MULTI-FACTOR DECISION ARCHITECTURE
+<div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:#1E2430;text-align:right;margin-top:8px;">
+    NOMOS TERMINAL v11.0 — MULTI-FACTOR DECISION ARCHITECTURE
 </div>
 """, unsafe_allow_html=True)
