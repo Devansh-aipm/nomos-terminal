@@ -379,11 +379,19 @@ h1, h2, h3, h4 {
 }
 
 /* Ensure inputs are always interactive */
-[data-testid="stTextInput"] input,
-[data-testid="stNumberInput"] input {
+[data-testid="stTextInput"],
+[data-testid="stTextInput"] *,
+[data-testid="stNumberInput"],
+[data-testid="stNumberInput"] *,
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea,
+[data-testid="stSidebar"] [role="slider"] {
     pointer-events: auto !important;
     position: relative !important;
-    z-index: 999 !important;
+    z-index: 9999 !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    cursor: text !important;
 }
 
 /* Hide default streamlit branding */
