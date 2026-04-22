@@ -428,16 +428,22 @@ def fmt_price(val, sym):
 def fetch_data(ticker):
     """Try exact ticker first, then regional suffixes. Returns (df, resolved_ticker, info_dict)."""
     candidates = [ticker]
-    # Only add Indian suffixes if user didn't specify a suffix
+    # Only add Indian suffixes if user did not specify a suffix
     if "." not in ticker:
         candidates += [f"{ticker}.NS", f"{ticker}.BO"]
     for tk in candidates:
         try:
-            data = yf.Ticker(tk).history(period="3y")
+            obj  = yf.Ticker(tk)
+            # Try download() first (more reliable on cloud), fall back to history()
+            data = yf.download(tk, period="3y", auto_adjust=True, progress=False)
+            if data.empty or len(data) < 150:
+                data = obj.history(period="3y")
+            # Flatten MultiIndex columns if present (download() returns them)
+            if isinstance(data.columns, pd.MultiIndex):
+                data.columns = data.columns.get_level_values(0)
             if not data.empty and len(data) >= 150:
-                # Convert fast_info to a plain dict so Streamlit cache can serialize it
                 try:
-                    raw_info = yf.Ticker(tk).fast_info
+                    raw_info = obj.fast_info
                     info = {k: getattr(raw_info, k, None) for k in [
                         "last_price", "market_cap", "fifty_two_week_high",
                         "fifty_two_week_low", "currency", "exchange"
