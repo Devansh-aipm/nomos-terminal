@@ -439,12 +439,6 @@ def build_alert_message(ticker, score, signal, trade_levels, cf_conditions, pric
         "Nomos Terminal v10.3 - Not financial advice"
     ]
     msg = "\n".join(lines)
-    x = (
-        f"NOMOS ALERT - {ticker}
-"
-        f"
-Nomos Terminal v10.3 - Not financial advice"
-    )
     return msg
 
 
