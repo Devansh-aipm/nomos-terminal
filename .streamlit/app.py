@@ -642,7 +642,7 @@ if user_input:
                 height=450, margin=dict(l=0, r=120, t=10, b=0),
                 legend=dict(orientation='h', y=1.05)
             )
-            st.plotly_chart(fig, use_container_width=True, key="fig_main")
+            st.plotly_chart(fig, width='stretch', key="fig_main")
 
             # MACD
             colors_m = ['#3FB950' if v >= 0 else '#F85149' for v in df['MACD_Hist'].fillna(0)]
@@ -652,7 +652,7 @@ if user_input:
             fig_m.add_trace(go.Scatter(x=df.index, y=df['Signal_Line'], name='Signal', line=dict(color='#F0B429', width=1.5)))
             fig_m.update_layout(template="plotly_dark", paper_bgcolor='#0D1117', plot_bgcolor='#0D1117',
                                   height=200, margin=dict(l=0, r=0, t=10, b=0), legend=dict(orientation='h', y=1.1))
-            st.plotly_chart(fig_m, use_container_width=True)
+            st.plotly_chart(fig_m, width='stretch')
 
         with col_b:
             st.markdown("#### S/R Levels")
@@ -737,7 +737,7 @@ if user_input:
                                height=420, margin=dict(l=0, r=80, t=10, b=0),
                                xaxis_title="Trading Days", yaxis_title="Projected Price",
                                legend=dict(orientation='h', y=1.05))
-        st.plotly_chart(fig_mc, use_container_width=True)
+        st.plotly_chart(fig_mc, width='stretch')
 
         mc1, mc2, mc3, mc4, mc5 = st.columns(5)
         mc1.metric("Prob. Upside",    f"{prob_up*100:.1f}%")
@@ -779,7 +779,7 @@ if user_input:
             fig_eq.update_layout(template="plotly_dark", paper_bgcolor='#0D1117', plot_bgcolor='#0D1117',
                                    height=320, margin=dict(l=0, r=0, t=10, b=0),
                                    yaxis_title="Cumulative Return (x)", legend=dict(orientation='h', y=1.1))
-            st.plotly_chart(fig_eq, use_container_width=True)
+            st.plotly_chart(fig_eq, width='stretch')
 
             with st.expander("Methodology Disclosure"):
                 st.markdown(f"""
@@ -826,7 +826,7 @@ if user_input:
                 'Win Rate':    [f"{r['win_rate']*100:.1f}%" for r in wf_results],
                 'Max DD':      [f"{r['mdd']*100:.1f}%" for r in wf_results],
             })
-            st.dataframe(fold_df, use_container_width=True, hide_index=True)
+            st.dataframe(fold_df, hide_index=True)
 
             fold_colors = ['#F0B429', '#58A6FF', '#3FB950', '#BC8CFF', '#FF7B72']
             fig_folds   = go.Figure()
@@ -839,7 +839,7 @@ if user_input:
             fig_folds.update_layout(template="plotly_dark", paper_bgcolor='#0D1117', plot_bgcolor='#0D1117',
                                      height=300, margin=dict(l=0, r=0, t=10, b=0),
                                      yaxis_title="Cumulative Return (x)", legend=dict(orientation='h', y=1.15))
-            st.plotly_chart(fig_folds, use_container_width=True)
+            st.plotly_chart(fig_folds, width='stretch')
 
             consistency = sum(1 for s in sharpes if s > 0) / len(sharpes)
             if consistency >= 0.8:
@@ -861,7 +861,7 @@ if user_input:
                                   f"{cal_ics.get('macd',0):.4f}", f"{cal_ics.get('trend',0):.4f}"],
             'Calibrated Weight': [f"{w_z:.3f}", f"{w_rsi:.3f}", f"{w_macd:.3f}", f"{w_trend:.3f}"],
         }
-        st.dataframe(pd.DataFrame(ic_data), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(ic_data), hide_index=True)
 
         st.markdown("#### Score Sensitivity Heatmap")
         z_range   = np.arange(1.0, 5.5, 0.5)
@@ -881,7 +881,7 @@ if user_input:
         ))
         fig_heat.update_layout(template="plotly_dark", paper_bgcolor='#0D1117',
                                 height=350, margin=dict(l=0, r=0, t=10, b=0))
-        st.plotly_chart(fig_heat, use_container_width=True)
+        st.plotly_chart(fig_heat, width='stretch')
 
     # ── TAB 6: MARKET RADAR (SCANNER) ─────────────────────────────────────────
     with tab6:
@@ -928,7 +928,6 @@ if user_input:
                 } for r in results])
                 st.dataframe(
                     scan_df,
-                    use_container_width=True,
                     hide_index=True,
                     column_config={
                         "Score":       st.column_config.NumberColumn("Score",      format="%.1f"),
