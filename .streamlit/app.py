@@ -919,7 +919,22 @@ if user_input:
                     'Dist Support': r['dist_sup'],
                     'Dist Resist':  r['dist_res'],
                 } for r in results])
-                st.dataframe(scan_df, use_container_width=True, hide_index=True)
+                st.dataframe(
+                    scan_df,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config={
+                        "Ticker":       st.column_config.TextColumn("Ticker",       width="small"),
+                        "Score":        st.column_config.NumberColumn("Score",      width="small",  format="%.1f"),
+                        "Signal":       st.column_config.TextColumn("Signal",       width="medium"),
+                        "Price":        st.column_config.TextColumn("Price",        width="small"),
+                        "RSI":          st.column_config.NumberColumn("RSI",        width="small",  format="%.1f"),
+                        "Vol Ratio":    st.column_config.NumberColumn("Vol Ratio",  width="small",  format="%.2f"),
+                        "Confluence":   st.column_config.TextColumn("Confluence",   width="small"),
+                        "Dist Support": st.column_config.TextColumn("Dist Support", width="small"),
+                        "Dist Resist":  st.column_config.TextColumn("Dist Resist",  width="small"),
+                    }
+                )
 
                 st.markdown("#### Ranked Signal Cards")
                 for r in results:
