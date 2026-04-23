@@ -396,8 +396,15 @@ def quick_score(ticker, sensitivity=1.5, risk_free_rate=0.07):
         if df.empty:
             return None
 
-        # Use fixed default weights for scanner speed (calibration is slow)
-        df['Nomos_Score'] = apply_weights(df, 3.0, 1.5, 1.0, 0.5, sensitivity)
+        # Same IC calibration as single-asset view — ensures score consistency
+        factors = {'z': df['F_Z'], 'rsi': df['F_RSI'],
+                   'macd': df['F_MACD'], 'trend': df['F_TREND']}
+        cal_w, _ = calibrate_weights(df['Close'], factors)
+        w_z     = cal_w.get('z',    3.0)
+        w_rsi   = cal_w.get('rsi',  1.5)
+        w_macd  = cal_w.get('macd', 1.0)
+        w_trend = cal_w.get('trend', 0.5)
+        df['Nomos_Score'] = apply_weights(df, w_z, w_rsi, w_macd, w_trend, sensitivity)
         curr = df.iloc[-1]
 
         score     = curr['Nomos_Score']
@@ -458,7 +465,7 @@ def build_export_csv(df, active_ticker, wf_results):
 st.sidebar.markdown("## NOMOS v10.2")
 
 if 'watchlist' not in st.session_state:
-    st.session_state.watchlist = ["NVDA", "AAPL", "RELIANCE", "BTC-USD"]
+    st.session_state.watchlist = []
 
 wl_input = st.sidebar.text_input("Add to Watchlist", placeholder="e.g. INFY").upper()
 if st.sidebar.button("Add") and wl_input and wl_input not in st.session_state.watchlist:
@@ -635,7 +642,7 @@ if user_input:
                 height=450, margin=dict(l=0, r=120, t=10, b=0),
                 legend=dict(orientation='h', y=1.05)
             )
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, use_container_width=True, key="fig_main")
 
             # MACD
             colors_m = ['#3FB950' if v >= 0 else '#F85149' for v in df['MACD_Hist'].fillna(0)]
