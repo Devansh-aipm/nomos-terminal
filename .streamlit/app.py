@@ -897,9 +897,9 @@ if user_input:
         else:
             if st.button("Run Scanner"):
                 results = []
-                progress = st.progress(0, text="Scanning...")
+                progress = st.progress(0)
                 for i, tk in enumerate(scan_tickers):
-                    progress.progress((i + 1) / len(scan_tickers), text=f"Scanning {tk}...")
+                    progress.progress((i + 1) / len(scan_tickers))
                     res = quick_score(tk, sensitivity, risk_free_rate)
                     if res:
                         results.append(res)
@@ -931,15 +931,9 @@ if user_input:
                     use_container_width=True,
                     hide_index=True,
                     column_config={
-                        "Ticker":       st.column_config.TextColumn("Ticker",       width="small"),
-                        "Score":        st.column_config.NumberColumn("Score",      width="small",  format="%.1f"),
-                        "Signal":       st.column_config.TextColumn("Signal",       width="medium"),
-                        "Price":        st.column_config.TextColumn("Price",        width="small"),
-                        "RSI":          st.column_config.NumberColumn("RSI",        width="small",  format="%.1f"),
-                        "Vol Ratio":    st.column_config.NumberColumn("Vol Ratio",  width="small",  format="%.2f"),
-                        "Confluence":   st.column_config.TextColumn("Confluence",   width="small"),
-                        "Dist Support": st.column_config.TextColumn("Dist Support", width="small"),
-                        "Dist Resist":  st.column_config.TextColumn("Dist Resist",  width="small"),
+                        "Score":       st.column_config.NumberColumn("Score",      format="%.1f"),
+                        "RSI":         st.column_config.NumberColumn("RSI",        format="%.1f"),
+                        "Vol Ratio":   st.column_config.NumberColumn("Vol Ratio",  format="%.2f"),
                     }
                 )
 
