@@ -10,11 +10,11 @@ import csv
 import time
 
 # ============================================================
-# NOMOS TERMINAL v10.2
-# New: S/R via Fractal Pivots | Multi-Asset Scanner | Confluence Score
+# NOMOS TERMINAL v10.3
+# New: Telegram Alerts | Entry/SL/TP | Top-5 Daily Report | Trade Cards
 # ============================================================
 
-st.set_page_config(page_title="Nomos Terminal | v10.2", layout="wide")
+st.set_page_config(page_title="Nomos Terminal | v10.3", layout="wide")
 
 st.markdown("""
 <style>
@@ -378,6 +378,61 @@ def compute_var_cvar(returns, confidence=0.95):
     cvar  = -clean[clean <= -var].mean()
     return var, cvar
 
+# ─── ENTRY / STOP-LOSS / TAKE-PROFIT ENGINE ──────────────────────────────────
+
+def compute_trade_levels(curr_price, atr, nearest_sup, nearest_res, signal):
+    if signal in ["STRONG BUY", "BUY"]:
+        stop   = (nearest_sup - atr) if nearest_sup else (curr_price - 1.5 * atr)
+        target = curr_price + 2 * atr
+        risk   = curr_price - stop
+        rr     = (target - curr_price) / risk if risk > 0 else 0
+        return dict(entry=curr_price, stop=round(stop,2), target=round(target,2),
+                    risk=round(risk,2), rr=round(rr,2), direction="LONG")
+    elif signal in ["STRONG SELL", "SELL"]:
+        stop   = (nearest_res + atr) if nearest_res else (curr_price + 1.5 * atr)
+        target = curr_price - 2 * atr
+        risk   = stop - curr_price
+        rr     = (curr_price - target) / risk if risk > 0 else 0
+        return dict(entry=curr_price, stop=round(stop,2), target=round(target,2),
+                    risk=round(risk,2), rr=round(rr,2), direction="SHORT")
+    return None
+
+# ─── TELEGRAM ALERT ENGINE ───────────────────────────────────────────────────
+
+def send_telegram_alert(bot_token, chat_id, message):
+    try:
+        import urllib.request, urllib.parse, json as _json
+        url  = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+        data = urllib.parse.urlencode({
+            "chat_id":    chat_id,
+            "text":       message,
+            "parse_mode": "HTML"
+        }).encode()
+        req  = urllib.request.Request(url, data=data)
+        resp = urllib.request.urlopen(req, timeout=5)
+        return _json.loads(resp.read()).get("ok", False)
+    except Exception:
+        return False
+
+def build_alert_message(ticker, score, signal, trade_levels, cf_conditions, price):
+    conf_passed = [k for k, v in cf_conditions.items() if v]
+    conf_str    = " | ".join(conf_passed)
+    tl = trade_levels
+    msg = (
+        f"<b>NOMOS ALERT — {ticker}</b>\n"
+        f"Signal : <b>{signal}</b>\n"
+        f"Score  : {score:.1f}/10\n"
+        f"Price  : ${price:.2f}\n"
+        f"\n<b>Trade Plan</b>\n"
+        f"Entry  : ${tl['entry']:.2f}\n"
+        f"Stop   : ${tl['stop']:.2f}  (risk ${tl['risk']:.2f})\n"
+        f"Target : ${tl['target']:.2f}  (RR 1:{tl['rr']:.1f})\n"
+        f"\n<b>Confluence</b>\n{conf_str}\n"
+        f"\n<i>Nomos Terminal v10.3 — Not financial advice</i>"
+    )
+    return msg
+
+
 # ─── STEP 2: SCANNER ENGINE ───────────────────────────────────────────────────
 
 def quick_score(ticker, sensitivity=1.5, risk_free_rate=0.07):
@@ -441,7 +496,7 @@ def quick_score(ticker, sensitivity=1.5, risk_free_rate=0.07):
 def build_export_csv(df, active_ticker, wf_results):
     buf = io.StringIO()
     w   = csv.writer(buf)
-    w.writerow(["NOMOS TERMINAL v10.2 — EXPORT"])
+    w.writerow(["NOMOS TERMINAL v10.3 — EXPORT"])
     w.writerow(["Ticker", active_ticker])
     w.writerow([])
     w.writerow(["Date","Close","MA50","MA200","RSI","Z_Score","ATR","Nomos_Score"])
@@ -462,7 +517,7 @@ def build_export_csv(df, active_ticker, wf_results):
 
 # ─── SIDEBAR ──────────────────────────────────────────────────────────────────
 
-st.sidebar.markdown("## NOMOS v10.2")
+st.sidebar.markdown("## NOMOS v10.3")
 
 if 'watchlist' not in st.session_state:
     st.session_state.watchlist = []
@@ -489,12 +544,17 @@ allow_short    = st.sidebar.checkbox("Allow Short Selling", value=False)
 use_kelly      = st.sidebar.checkbox("Kelly Position Sizing", value=False)
 sr_proximity   = st.sidebar.slider("S/R Proximity Threshold (%)", 0.5, 5.0, 2.0, 0.5) / 100
 st.sidebar.divider()
-st.sidebar.caption("v10.2 | Strategic Intelligence Build")
+st.sidebar.markdown("**Telegram Alerts**")
+tg_token   = st.sidebar.text_input("Bot Token", type="password", placeholder="From @BotFather")
+tg_chat_id = st.sidebar.text_input("Chat ID",   placeholder="Your Telegram chat ID")
+tg_thresh  = st.sidebar.slider("Alert Score Threshold", 6.0, 9.5, 7.5, 0.5)
+st.sidebar.divider()
+st.sidebar.caption("v10.3 | Decision Engine Build")
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 
 st.markdown("# NOMOS TERMINAL")
-st.caption("Institutional Decision Support  |  v10.2  |  S/R Detection · Scanner · Confluence Scoring")
+st.caption("Institutional Decision Support  |  v10.3  |  Alerts · Entry/SL/TP · Top-5 Report · Scanner · Confluence Scoring")
 st.divider()
 
 if user_input:
@@ -591,14 +651,15 @@ if user_input:
     """, unsafe_allow_html=True)
 
     # ── TABS ───────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
         "Trend + S/R",
         "Fat-Tail Risk",
         "Quant Vault",
         "Walk-Forward",
         "Weight Calibration",
         "Market Radar",
-        "Export"
+        "Export",
+        "Strategic Intelligence"
     ])
 
     # ── TAB 1: TREND + S/R ────────────────────────────────────────────────────
@@ -1008,6 +1069,130 @@ if user_input:
                 )
             else:
                 st.info("Run the scanner first to enable this export.")
+
+
+    # ── TAB 8: STRATEGIC INTELLIGENCE ────────────────────────────────────────
+    with tab8:
+        st.markdown("### Strategic Intelligence — Decision Engine")
+
+        current_signal = (
+            "STRONG BUY"  if score_val >= 8.0 else
+            "BUY"         if score_val >= 6.5 else
+            "HOLD"        if score_val >= 4.5 else
+            "SELL"        if score_val >= 3.0 else
+            "STRONG SELL"
+        )
+
+        trade_levels = compute_trade_levels(
+            curr["Close"], curr["ATR"],
+            nearest_sup, nearest_res, current_signal
+        )
+
+        # ── Trade Card ──
+        if trade_levels:
+            tl = trade_levels
+            rr_color  = "#3FB950" if tl["rr"] >= 2 else "#F0B429" if tl["rr"] >= 1 else "#F85149"
+            dir_color = "#3FB950" if tl["direction"] == "LONG" else "#F85149"
+
+            c_e, c_sl, c_tp, c_atr = st.columns(4)
+            c_e.metric("ENTRY",     f"${tl['entry']:.2f}")
+            c_sl.metric("STOP LOSS",f"${tl['stop']:.2f}",  delta=f"-${tl['risk']:.2f}")
+            c_tp.metric("TARGET",   f"${tl['target']:.2f}", delta=f"+${abs(tl['target']-tl['entry']):.2f}")
+            c_atr.metric("R/R RATIO", f"1 : {tl['rr']:.1f}")
+
+            dir_badge = "LONG" if tl["direction"] == "LONG" else "SHORT"
+            st.markdown(
+                f'<span style="background:{"#0D2B1A" if dir_badge=="LONG" else "#2B0D0D"};'
+                f'color:{dir_color};padding:4px 14px;border-radius:4px;'
+                f'font-family:JetBrains Mono;font-size:13px;border:1px solid {dir_color};">'
+                f'{dir_badge} · {current_signal} · Score {score_val:.1f}/10</span>',
+                unsafe_allow_html=True
+            )
+            st.caption("Stop = nearest support minus 1x ATR. Target = entry + 2x ATR. Minimum 1:2 RR enforced.")
+        else:
+            st.info("Signal is HOLD (score 4.5–6.5). No directional trade plan generated.")
+
+        st.divider()
+
+        # ── Top 5 Watchlist Ranking ──
+        st.markdown("### Top Opportunities — Watchlist Ranking")
+        st.caption("Ranked by Nomos Score. Run the scanner first in Market Radar tab.")
+
+        if "scanner_results" in st.session_state and st.session_state["scanner_results"]:
+            top5 = st.session_state["scanner_results"][:5]
+            for rank, r in enumerate(top5, 1):
+                sig    = r["signal"]
+                sc     = r["score"]
+                sc_col = "#3FB950" if sc >= 7 else "#F85149" if sc <= 4 else "#F0B429"
+                border = "#238636" if "BUY" in sig else "#DA3633" if "SELL" in sig else "#30363D"
+                bg     = "#0D2B1A" if "BUY" in sig else "#2B0D0D" if "SELL" in sig else "#0D1117"
+                st.markdown(
+                    f'<div style="background:{bg};border:1px solid {border};border-radius:8px;'
+                    f'padding:12px 18px;margin-bottom:8px;display:flex;'
+                    f'justify-content:space-between;align-items:center;">'
+                    f'<div><span style="font-family:JetBrains Mono;color:#8B949E;font-size:1.1rem;">#{rank}</span>'
+                    f'&nbsp;&nbsp;<span style="font-family:JetBrains Mono;font-size:1rem;font-weight:700;">{r["ticker"]}</span>'
+                    f'&nbsp;&nbsp;<span style="color:#8B949E;font-size:11px;">'
+                    f'${r["price"]} · RSI {r["rsi"]} · Conf {r["confluence_count"]}/4</span></div>'
+                    f'<div style="text-align:right;">'
+                    f'<p style="font-family:JetBrains Mono;font-size:1.3rem;color:{sc_col};font-weight:700;margin:0;">{sc}/10</p>'
+                    f'<p style="font-family:JetBrains Mono;color:{sc_col};font-size:11px;margin:0;">{sig}</p>'
+                    f'</div></div>',
+                    unsafe_allow_html=True
+                )
+        else:
+            st.info("Add tickers to your watchlist, run Market Radar scanner, then return here.")
+
+        st.divider()
+
+        # ── Telegram Alert ──
+        st.markdown("### Telegram Alert")
+        st.caption("Send this signal directly to your Telegram. Create a bot at t.me/BotFather in 2 minutes.")
+
+        if not tg_token or not tg_chat_id:
+            st.warning("Enter Bot Token and Chat ID in the sidebar to enable alerts.")
+        else:
+            alert_ready = score_val >= tg_thresh
+            a1, a2 = st.columns(2)
+            status_color = "#3FB950" if alert_ready else "#8B949E"
+            status_text  = "THRESHOLD MET — READY TO SEND" if alert_ready else f"BELOW THRESHOLD ({score_val:.1f} < {tg_thresh:.1f})"
+            a1.markdown(
+                f'<div style="background:#0D1117;border:1px solid {status_color};border-radius:8px;padding:14px;">'
+                f'<p style="color:#8B949E;font-size:11px;margin:0;letter-spacing:1px;">ALERT STATUS</p>'
+                f'<p style="font-family:JetBrains Mono;color:{status_color};margin:4px 0;">{status_text}</p></div>',
+                unsafe_allow_html=True
+            )
+            with a2:
+                if st.button("Send Alert to Telegram", disabled=not alert_ready):
+                    if trade_levels:
+                        msg     = build_alert_message(
+                            active_ticker, score_val, current_signal,
+                            trade_levels, cf_conditions, curr["Close"]
+                        )
+                        success = send_telegram_alert(tg_token, tg_chat_id, msg)
+                        if success:
+                            st.success("Alert sent successfully.")
+                        else:
+                            st.error("Send failed. Verify your Bot Token and Chat ID.")
+                    else:
+                        st.warning("Signal is HOLD — no trade plan to send.")
+
+            with st.expander("Preview Alert Message"):
+                if trade_levels:
+                    tl = trade_levels
+                    preview = (
+                        f"NOMOS ALERT — {active_ticker}\n"
+                        f"Signal : {current_signal}\n"
+                        f"Score  : {score_val:.1f}/10\n"
+                        f"Price  : ${curr['Close']:.2f}\n\n"
+                        f"Trade Plan\n"
+                        f"Entry  : ${tl['entry']:.2f}\n"
+                        f"Stop   : ${tl['stop']:.2f}  (risk ${tl['risk']:.2f})\n"
+                        f"Target : ${tl['target']:.2f}  (RR 1:{tl['rr']:.1f})\n\n"
+                        f"Confluence: {', '.join([k for k,v in cf_conditions.items() if v])}"
+                    )
+                    st.code(preview, language="text")
+
 
     # ── FOOTER ─────────────────────────────────────────────────────────────────
     st.divider()
