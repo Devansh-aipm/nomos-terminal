@@ -406,7 +406,7 @@ def send_telegram_alert(bot_token, chat_id, message):
         data = urllib.parse.urlencode({
             "chat_id":    chat_id,
             "text":       message,
-            "parse_mode": "HTML"
+            "parse_mode": "Markdown"
         }).encode()
         req  = urllib.request.Request(url, data=data)
         resp = urllib.request.urlopen(req, timeout=10)
@@ -420,19 +420,30 @@ def send_telegram_alert(bot_token, chat_id, message):
 
 def build_alert_message(ticker, score, signal, trade_levels, cf_conditions, price):
     conf_passed = [k for k, v in cf_conditions.items() if v]
-    conf_str    = " | ".join(conf_passed)
+    conf_str    = ", ".join(conf_passed)
     tl = trade_levels
-    msg = (
-        f"<b>NOMOS ALERT — {ticker}</b>\n"
-        f"Signal : <b>{signal}</b>\n"
-        f"Score  : {score:.1f}/10\n"
-        f"Price  : ${price:.2f}\n"
-        f"\n<b>Trade Plan</b>\n"
-        f"Entry  : ${tl['entry']:.2f}\n"
-        f"Stop   : ${tl['stop']:.2f}  (risk ${tl['risk']:.2f})\n"
-        f"Target : ${tl['target']:.2f}  (RR 1:{tl['rr']:.1f})\n"
-        f"\n<b>Confluence</b>\n{conf_str}\n"
-        f"\n<i>Nomos Terminal v10.3 — Not financial advice</i>"
+    rr_str = "1 to " + str(round(tl['rr'], 1))
+    lines = [
+        "NOMOS ALERT - " + ticker,
+        "Signal: " + signal,
+        "Score: " + str(round(score, 1)) + "/10",
+        "Price: " + str(round(price, 2)),
+        "",
+        "Trade Plan",
+        "Entry:  " + str(tl['entry']),
+        "Stop:   " + str(tl['stop']) + " (risk " + str(tl['risk']) + ")",
+        "Target: " + str(tl['target']) + " (RR " + rr_str + ")",
+        "",
+        "Confluence: " + conf_str,
+        "",
+        "Nomos Terminal v10.3 - Not financial advice"
+    ]
+    msg = "\n".join(lines)
+    x = (
+        f"NOMOS ALERT - {ticker}
+"
+        f"
+Nomos Terminal v10.3 - Not financial advice"
     )
     return msg
 
