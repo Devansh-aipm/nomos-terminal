@@ -409,10 +409,14 @@ def send_telegram_alert(bot_token, chat_id, message):
             "parse_mode": "HTML"
         }).encode()
         req  = urllib.request.Request(url, data=data)
-        resp = urllib.request.urlopen(req, timeout=5)
-        return _json.loads(resp.read()).get("ok", False)
-    except Exception:
-        return False
+        resp = urllib.request.urlopen(req, timeout=10)
+        result = _json.loads(resp.read())
+        return True, result.get("description", "OK")
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        return False, f"HTTP {e.code}: {body}"
+    except Exception as e:
+        return False, str(e)
 
 def build_alert_message(ticker, score, signal, trade_levels, cf_conditions, price):
     conf_passed = [k for k, v in cf_conditions.items() if v]
@@ -1169,11 +1173,11 @@ if user_input:
                             active_ticker, score_val, current_signal,
                             trade_levels, cf_conditions, curr["Close"]
                         )
-                        success = send_telegram_alert(tg_token, tg_chat_id, msg)
+                        success, detail = send_telegram_alert(tg_token, tg_chat_id, msg)
                         if success:
                             st.success("Alert sent successfully.")
                         else:
-                            st.error("Send failed. Verify your Bot Token and Chat ID.")
+                            st.error(f"Send failed: {detail}")
                     else:
                         st.warning("Signal is HOLD — no trade plan to send.")
 
